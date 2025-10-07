@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CineStar • Ingressos e Estreias</title>
+<style>
+  :root{
+    --bg: #0b132b;
+    --card: #1c2541;
+    --muted: #3a506b;
+    --brand: #5bc0be;
+    --text: #e0e6ed;
+    --accent: #090907;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#0b132b 0%,#1b2a4a 100%);color:var(--text)}
+  a{color:inherit;text-decoration:none}
+  .container{max-width:1200px;margin:0 auto;padding:16px}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.2rem}
+  .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+  .nav-links{display:flex;gap:12px;align-items:center}
+  .btn{background:var(--brand);color:#042a2b;border:none;padding:10px 14px;border-radius:999px;cursor:pointer;font-weight:600;transition:.2s}
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.05)}
+  .btn-outline{background:transparent;border:1px solid var(--brand);color:var(--text)}
+  .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;align-items:stretch;margin-top:8px}
+  .hero-banner{position:relative;border-radius:16px;overflow:hidden;background:#000;min-height:300px}
+  .hero-banner img{width:100%;height:100%;object-fit:cover;opacity:.85;display:block}
+  .hero-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:22px;background:linear-gradient(180deg,rgba(0,0,0,0) 30%,rgba(0,0,0,.6) 100%)}
+  .hero-title{font-size:1.8rem;font-weight:800}
+  .hero-sub{opacity:.9;margin-top:6px}
+  .hero-cta{margin-top:12px;display:flex;gap:10px}
+  .side{background:var(--card);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:14px}
+  .side h3{font-size:1.05rem}
+  .showtime{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{padding:8px 12px;border:1px solid var(--muted);border-radius:999px;cursor:pointer}
+  .chip:hover{border-color:var(--brand)}
+  .section{display:flex;align-items:center;justify-content:space-between;margin:24px 0 12px}
+  .section h2{font-size:1.3rem}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .card{background:var(--card);border-radius:14px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.25);display:flex;flex-direction:column}
+  .poster{aspect-ratio:2/3;background:#000}
+  .poster img{width:100%;height:100%;object-fit:cover;display:block}
+  .info{padding:12px;display:flex;flex-direction:column;gap:8px}
+  .title{font-weight:700}
+  .meta{font-size:.9rem;opacity:.85;display:flex;gap:8px;align-items:center}
+  .price{font-weight:800;color:var(--accent)}
+  .row{display:flex;gap:8px;align-items:center}
+  .select{flex:1;padding:8px;border-radius:8px;border:1px solid var(--muted);background:#0f1b33;color:var(--text)}
+  .buy{padding:9px 12px;border-radius:10px;background:var(--brand);border:none;color:#062c2b;font-weight:700;cursor:pointer}
+  .buy:hover{filter:brightness(1.05)}
+  footer{opacity:.75;text-align:center;padding:28px 0}
+  /* Chat flutuante */
+  #chat-btn{position:fixed;bottom:20px;right:20px;background:var(--accent);color:#000;border:none;padding:14px;border-radius:50%;font-weight:700;cursor:pointer;box-shadow:0 6px 15px rgba(0,0,0,.35)}
+  #chat-box{position:fixed;bottom:80px;right:20px;width:300px;background:var(--card);border-radius:16px;padding:16px;display:none;flex-direction:column;gap:12px;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+  #chat-box input{padding:8px;border-radius:8px;border:1px solid var(--muted);width:100%;color:var(--text);background:#0f1b33}
+  .message{padding:8px 12px;border-radius:15px;margin-bottom:6px;max-width:75%;}
+  .message.user{background:#90e0ef;color:#000;align-self:flex-end;}
+  .message.bot{background:#0077b6;color:#fff;align-self:flex-start;}
+  @media(max-width:950px){.grid{grid-template-columns:repeat(2,1fr)}.hero{grid-template-columns:1fr}}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}.nav-links{display:none}}
+</style>
+
+<!-- Google OAuth -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+  function handleCredentialResponse(response) {
+    console.log("JWT ID Token: " + response.credential);
+    alert("Login realizado com sucesso!");
+    // Aqui você pode enviar o token para seu backend validar
+  }
+
+  window.onload = function () {
+    google.accounts.id.initialize({
+      client_id: "115319079443-20eb9mia19rfiu4aun1sjm9vkrj4f84p.apps.googleusercontent.com",
+      callback: handleCredentialResponse
+    });
+    google.accounts.id.renderButton(
+      document.getElementById("googleBtn"),
+      { theme: "outline", size: "large" }
+    );
+  }
+</script>
+</head>
+<body>
+
+<header class="container">
+  <nav class="nav">
+    <div class="brand"><span class="dot"></span> CineStar</div>
+    <div class="nav-links">
+      <a href="#estreias" class="btn btn-outline">Estreias</a>
+      <a href="#emcartaz" class="btn btn-outline">Em cartaz</a>
+      <a href="login.html" class="btn">Entrar</a>
+      <!-- Botão Google -->
+      <div id="googleBtn"></div>
+    </div>
+  </nav>
+</header>
+
+<main class="container">
+  <!-- resto do seu código continua igual -->
+  <section class="hero">
+    <div class="hero-banner">
+      <img src="https://images.unsplash.com/photo-1517602302552-471fe67acf66?q=80&w=1400&auto=format&fit=crop" alt="Cinema banner">
+      <div class="hero-overlay">
+        <div class="hero-title">Pré-venda: A Lenda do Amanhã</div>
+        <div class="hero-sub">IMAX • Dublado e Legendado • 2D e 3D</div>
+        <div class="hero-cta">
+          <button class="btn" onclick="buyMovie('A Lenda do Amanhã')">Comprar agora</button>
+          <a class="btn btn-outline" href="#emcartaz">Ver sessões</a>
+        </div>
+      </div>
+    </div>
+    <aside class="side">
+      <h3>Hoje no CineStar</h3>
+      <div class="showtime">
+        <span class="chip">14:15</span>
+        <span class="chip">16:40</span>
+        <span class="chip">18:30</span>
+        <span class="chip">20:10</span>
+        <span class="chip">22:00</span>
+      </div>
+      <h3>Promoções</h3>
+      <div>🎟️ Meia para estudantes • 🍿 Combo Pop + Refri</div>
+      <h3>Previsão do Tempo</h3>
+      <div id="weather" style="display:flex;flex-direction:column;gap:6px">
+        <span id="weather-location">Carregando...</span>
+        <span id="weather-temp"></span>
+        <span id="weather-desc"></span>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<footer>
+  <div class="container">© 2025 CineStar • Termos • Privacidade • SAC: (11) 4000-0000</div>
+</footer>
+
+<!-- Chat -->
+<button id="chat-btn">💬</button>
+<div id="chat-box">
+  <div id="chat-messages" style="flex:1;overflow-y:auto;"></div>
+  <input type="text" placeholder="Digite sua mensagem..." onkeydown="if(event.key==='Enter'){sendMessage()}">
+</div>
+
+<script>
+  // Função de compra simulada
+  function buyMovie(title){
+    alert(`Compra iniciada para o filme: ${title}`);
+    window.location.href = `pagamento.html?filme=${encodeURIComponent(title)}`;
+  }
+
+  // ===== Previsão do tempo =====
+  const apiKey = '2806b9f1bcfb971f462943b09a2f898a';
+  const city = 'São Paulo';
+  async function updateWeather(){
+    try {
+      const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=pt_br`);
+      const data = await res.json();
+      document.getElementById('weather-location').innerText = data.name;
+      document.getElementById('weather-temp').innerText = `${Math.round(data.main.temp)}°C`;
+      document.getElementById('weather-desc').innerText = data.weather[0].description;
+    } catch(err){
+      console.error(err);
+      document.getElementById('weather-location').innerText = 'Erro ao carregar';
+      document.getElementById('weather-temp').innerText = '--°C';
+      document.getElementById('weather-desc').innerText = '--';
+    }
+  }
+  updateWeather();
+  setInterval(updateWeather, 300000);
+
+  // ===== Chat flutuante =====
+  const chatBtn = document.getElementById('chat-btn');
+  const chatBox = document.getElementById('chat-box');
+  const chatMessages = document.getElementById('chat-messages');
+  const chatInput = chatBox.querySelector('input');
+
+  chatBtn.addEventListener('click', () => {
+    chatBox.style.display = chatBox.style.display === 'flex' ? 'none' : 'flex';
+    chatInput.focus();
+  });
+
+  function sendMessage(){
+    const text = chatInput.value.trim();
+    if(!text) return;
+    addMessage(text,'user');
+    chatInput.value='';
+    setTimeout(()=>{
+      const replies = [
+        'Olá! Como posso ajudar?',
+        'Confira a previsão do tempo acima.',
+        'Desculpe, não entendi. Pode reformular?',
+        'Compra de ingressos disponível clicando nos botões.'
+      ];
+      addMessage(replies[Math.floor(Math.random()*replies.length)],'bot');
+    },1000);
+  }
+
+  function addMessage(text,type){
+    const div=document.createElement('div');
+    div.className='message '+type;
+    div.innerText=text;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop=chatMessages.scrollHeight;
+  }
+</script>
+</body>
+</html>
+
